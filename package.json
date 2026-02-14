@@ -1,0 +1,51 @@
+{
+  "name": "self-learning-system",
+  "version": "1.0.0",
+  "description": "自己進化AIシステム - ユーザーの行動パターンから学習して自己進化",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "npm run test:jest",
+    "test:jest": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:all": "ts-node tests/test-proposal-generator.ts && ts-node tests/test-evolution-engine.ts && ts-node tests/test-report-generator.ts",
+    "test:proposal": "ts-node tests/test-proposal-generator.ts",
+    "test:evolution": "ts-node tests/test-evolution-engine.ts",
+    "test:report": "ts-node tests/test-report-generator.ts"
+  },
+  "keywords": [
+    "ai",
+    "self-learning",
+    "pattern-detection",
+    "evolution"
+  ],
+  "author": "tndg16-bot",
+  "license": "MIT",
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "@types/moment-timezone": "^0.5.13",
+    "discord-api-types": "^0.38.39",
+    "dotenv": "^16.6.1",
+    "fs-extra": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "moment-timezone": "^0.6.0",
+    "openai": "^4.0.0",
+    "simple-statistics": "^7.8.8"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.0",
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tndg16-bot/self-learning-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tndg16-bot/self-learning-system/issues"
+  },
+  "homepage": "https://github.com/tndg16-bot/self-learning-system#readme"
+}

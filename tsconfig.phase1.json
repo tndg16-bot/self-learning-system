@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/phase1",
+    "rootDir": "./src/phase1"
+  },
+  "include": ["src/types/*.ts", "src/phase1/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
