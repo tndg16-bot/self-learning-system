@@ -12,6 +12,7 @@ export class DiscordReader {
     userId?: string;
     startDate?: string;
     endDate?: string;
+    useMockData?: boolean;
   };
 
   constructor(config?: {
@@ -19,8 +20,16 @@ export class DiscordReader {
     userId?: string;
     startDate?: string;
     endDate?: string;
+    useMockData?: boolean;
   }) {
+    // 環境変数からDISCORD_USER_IDを読み込む
+    const defaultUserId = process.env.DISCORD_USER_ID || undefined;
     this.config = config || {};
+
+    // config.userIdが指定されていない場合、環境変数の値を使用
+    if (!this.config.userId && defaultUserId) {
+      this.config.userId = defaultUserId;
+    }
   }
 
   /**
@@ -29,11 +38,20 @@ export class DiscordReader {
    * ここでは、OpenClawのmessageツールを使用してデータを収集する
    */
   async collectMessages(): Promise<DiscordMessage[]> {
+    if (this.config.useMockData) {
+      return this.getMockData();
+    }
+
     try {
       // 注: この実装はOpenClaw環境に依存しています
       // 実際の使用では、OpenClawのmessageツールを使用してデータを収集します
 
-      // デモ用のダミーデータを返す
+      // デモ用のダミーデータを返す（環境変数または設定から取得したDISCORD_USER_IDに合わせる）
+      const targetUserId = this.config.userId;
+      if (!targetUserId) {
+        throw new Error('DISCORD_USER_ID is not set in .env file or config');
+      }
+
       const messages: DiscordMessage[] = [
         {
           id: '1',
@@ -41,7 +59,7 @@ export class DiscordReader {
           channelId: '1471766005846905016',
           content: 'おはよう',
           author: 'tndg16',
-          authorId: '123456789012345678',
+          authorId: targetUserId,
         },
         {
           id: '2',
@@ -49,7 +67,7 @@ export class DiscordReader {
           channelId: '1471766005846905016',
           content: '今日は何をする？',
           author: 'tndg16',
-          authorId: '123456789012345678',
+          authorId: targetUserId,
         },
         {
           id: '3',
@@ -57,7 +75,7 @@ export class DiscordReader {
           channelId: '1471766005846905016',
           content: 'タスクを管理して',
           author: 'tndg16',
-          authorId: '123456789012345678',
+          authorId: targetUserId,
         },
       ];
 
@@ -65,6 +83,70 @@ export class DiscordReader {
     } catch (error) {
       throw new Error(`Discord message collection failed: ${error}`);
     }
+  }
+
+  /**
+   * モックデータを生成する
+   */
+  private getMockData(): DiscordMessage[] {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+
+    const targetUserId = this.config.userId;
+    if (!targetUserId) {
+      throw new Error('DISCORD_USER_ID is not set in .env file or config');
+    }
+
+    return [
+      {
+        id: 'discord-1',
+        timestamp: `${dateStr}T09:00:00Z`,
+        channelId: '1471766005846905016',
+        channelName: 'general',
+        content: 'おはようございます！今日は自己進化システムの実装を進めます',
+        author: 'tndg16',
+        authorId: targetUserId,
+      },
+      {
+        id: 'discord-2',
+        timestamp: `${dateStr}T10:30:00Z`,
+        channelId: '1471766005846905016',
+        channelName: 'general',
+        content: 'Phase 1 データ収集機能の実装を開始しました',
+        author: 'tndg16',
+        authorId: targetUserId,
+      },
+      {
+        id: 'discord-3',
+        timestamp: `${dateStr}T12:00:00Z`,
+        channelId: '1471766005846905016',
+        channelName: 'general',
+        content: 'GitHub APIトークンが期限切れなので、モックデータを使用します',
+        author: 'tndg16',
+        authorId: targetUserId,
+      },
+      {
+        id: 'discord-4',
+        timestamp: `${dateStr}T14:00:00Z`,
+        channelId: '1471766005846905016',
+        channelName: 'general',
+        content: 'Google Calendar統合も追加しました',
+        author: 'tndg16',
+        authorId: targetUserId,
+      },
+      {
+        id: 'discord-5',
+        timestamp: `${dateStr}T16:00:00Z`,
+        channelId: '1471766005846905016',
+        channelName: 'general',
+        content: '進捗状況をDiscordスレッドに報告します',
+        author: 'tndg16',
+        authorId: targetUserId,
+      },
+    ];
   }
 
   /**
@@ -92,7 +174,9 @@ export class DiscordReader {
     }
 
     if (this.config.endDate) {
+      // endDateをその日の23:59:59に設定して、その日のメッセージも含める
       const endDate = new Date(this.config.endDate);
+      endDate.setHours(23, 59, 59, 999);
       filtered = filtered.filter(msg => new Date(msg.timestamp) <= endDate);
     }
 
